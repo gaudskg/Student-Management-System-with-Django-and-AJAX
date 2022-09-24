@@ -1,6 +1,6 @@
 import imp
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from .models import Student
 from django.views.decorators.csrf import csrf_exempt
 
@@ -15,8 +15,9 @@ def home(request):
 
 @csrf_exempt
 def send_data(request):
-    if request.POST():
-        name = request.POST.get('name')
-        print(name,"**********")
-    
-    pass
+    if request.method == "POST":
+        email = request.POST['name']
+        name = request.POST['name']
+        branch = request.POST['branch']
+        print(f"{name}*******{email}************{branch}")
+        return JsonResponse({'status':200})

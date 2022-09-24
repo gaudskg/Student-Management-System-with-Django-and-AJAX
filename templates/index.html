@@ -76,33 +76,6 @@
         </table>
         <!-- Table end -->
     </div>
-    <script>
-        $(document).ready(function () {
-            $("#subm").click(function (e) {
-                e.preventDefault();
-                var name = $("#exampleInputName").val();
-                var email = $("#exampleInputEmail1").val();
-                var branch = $("#exampleInputBranch").val();
-                data = {
-                    'name': name,
-                    'email': email,
-                    'branch': branch
-                }
-                console.log(name, email, branch);
-                $.ajax({
-                    type: "POST",
-                    url: "{% url 'send_data'%}",
-                    data: data,
-                    dataType: 'json',
-                    success: function (data) {
-                        console.log('DATA SENT')
-                    }
-                });
-
-            });
-        });
-    </script>
-
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -116,5 +89,34 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
 </body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#subm").click(function (e) {
+            e.preventDefault();
+            var name = $("#exampleInputName").val();
+            var email = $("#exampleInputEmail1").val();
+            var branch = $("#exampleInputBranch").val();
+            data = {
+                'name': name,
+                'email': email,
+                'branch': branch
+            }
+            console.log(name, email, branch);
+            $.ajax({
+                type: "POST",
+                url: "{% url 'send_data'%}",
+                data: data,
+                dataType: 'json',
+                success: function (data) {
+                    alert('DATA SENT')
+                }
+            });
+
+        });
+    });
+</script>
+
 
 </html>
