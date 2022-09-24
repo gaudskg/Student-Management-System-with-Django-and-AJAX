@@ -16,8 +16,10 @@ def home(request):
 @csrf_exempt
 def send_data(request):
     if request.method == "POST":
-        email = request.POST['name']
+        email = request.POST['email']
         name = request.POST['name']
         branch = request.POST['branch']
+        values = Student.objects.create(name=name,email=email,branch=branch)
+        values.save()
         print(f"{name}*******{email}************{branch}")
         return JsonResponse({'status':200})
