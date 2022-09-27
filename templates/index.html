@@ -32,7 +32,7 @@
 
     <!-- Form -->
     <div class="container">
-        <form>
+        <form id="student_form">
             <div class="form-group">
                 <label for="exampleInputEmail1">Email address</label>
                 <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
@@ -61,6 +61,7 @@
                     <th scope="col">Name</th>
                     <th scope="col">EMAIL</th>
                     <th scope="col">BRANCH</th>
+                    <th scope="col">ACTION</th>
                 </tr>
             </thead>
             <tbody>
@@ -70,6 +71,11 @@
                     <td>{{val.name}}</td>
                     <td>{{val.email}}</td>
                     <td>{{val.branch}}</td>
+                    <td>
+                        <a data-target="#student_form" data-button='{"student_id":"{{val.id}}","student_name":"{{val.name}}","student_email":"{{val.email}}","student_branch":"{{val.branch}}"}' href="#" class="btn btn-info btn-xs edit_student">EDIT</a>
+                        <a data-button='{"student_id":"{{val.id}}"}' href="#" class="btn btn-danger btn-xs delet_student">Delete</a>
+                    </td>
+                    <!-- <td><a data-toggle="modal" data-target="#delete_tutorial"  data-button='{"tutorial_id":"{{row.tutorial_id}}"}' href="#" class="btn btn-info btn-xs delete_tutorial">Delete</a></td> -->
                 </tr>
                 {% endfor %}
             </tbody>
@@ -92,12 +98,14 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+    // ADDING NEW VALUE ACTION
     $(document).ready(function () {
         $("#subm").click(function (e) {
             e.preventDefault();
             var name = $("#exampleInputName").val();
             var email = $("#exampleInputEmail1").val();
             var branch = $("#exampleInputBranch").val();
+            
             data = {
                 'name': name,
                 'email': email,
@@ -113,9 +121,53 @@
                     alert('DATA SENT')
                 }
             });
-
         });
+
+        // DELETE ACTION
+        $('body').on("click", ".delet_student", function () {
+                var data = $.parseJSON($(this).attr('data-button'));
+                var student_id = data.student_id;
+                console.log(student_id)
+                $.ajax({
+                    url: "{% url 'delete_data' %}",
+                    type: "post",
+                    data: {
+                        student_id: student_id,
+                    },
+                    success: function (data) {
+                        alert('DATA DELETED')
+                        location.reload();
+                    }
+                });
+        });
+
+        // EDIT ACTION
+        $('body').on("click", ".edit_student", function () {
+
+        var data = $.parseJSON($(this).attr('data-button'));
+        var student_id = data.student_id;
+        // console.log(student_id)
+        $("#exampleInputEmail1").val(data.student_email);
+        $("#exampleInputName").val(data.student_name);
+        $("#exampleInputBranch").val(data.student_branch);
+        var fd = new FormData($("#student_form")[0]);
+        console.log(fd)
+        // $.ajax({
+        //     url: "{% url 'send_data' %}",
+        //     type: "post",
+        //     dataType: 'json',
+        //     data: fd,
+        //     cache : false,
+        //     processData: false,
+        //     success: function (data) {
+        //         var data = JSON.parse(data);
+        //         // location.reload();
+        //     }
+        // });
+        });
+
     });
+
 </script>
 
 
