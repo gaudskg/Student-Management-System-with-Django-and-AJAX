@@ -12,7 +12,14 @@
 
     <title>Student Management System</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+    <style>
+        .container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
 </head>
 
 <body>
@@ -32,6 +39,7 @@
 
     <!-- Form -->
     <div class="container">
+        <div class="div_form">
         <form id="student_form">
             <div class="form-group">
                 <label for="exampleInputEmail1">Email address</label>
@@ -48,12 +56,15 @@
                 <label for="exampleInputBranch">Branch</label>
                 <input type="text" class="form-control" id="exampleInputBranch" placeholder="Branch">
             </div>
+            <input type="hidden" class="form-control" id="exampleInputId" placeholder="Branch" >
 
             <button type="submit" class="btn btn-primary" id="subm">Submit</button>
         </form>
+    </div>
         <!-- FOrm End -->
         <br><br>
         <!-- table Start -->
+        <div class="stude_table">
         <table class="table">
             <thead>
                 <tr>
@@ -67,7 +78,7 @@
             <tbody>
                 {% for val in data %}
                 <tr>
-                    <th scope="row">{{val.id}}</th>
+                    <th scope="row">{{forloop.counter}}</th>
                     <td>{{val.name}}</td>
                     <td>{{val.email}}</td>
                     <td>{{val.branch}}</td>
@@ -80,6 +91,7 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
         <!-- Table end -->
     </div>
 
@@ -105,11 +117,13 @@
             var name = $("#exampleInputName").val();
             var email = $("#exampleInputEmail1").val();
             var branch = $("#exampleInputBranch").val();
+            var stu_id = $("#exampleInputId").val();
             
             data = {
                 'name': name,
                 'email': email,
-                'branch': branch
+                'branch': branch,
+                'stu_id': stu_id
             }
             console.log(name, email, branch);
             $.ajax({
@@ -118,7 +132,8 @@
                 data: data,
                 dataType: 'json',
                 success: function (data) {
-                    alert('DATA SENT')
+                    console.log('DATA SENT')
+                    location.reload();
                 }
             });
         });
@@ -150,8 +165,10 @@
         $("#exampleInputEmail1").val(data.student_email);
         $("#exampleInputName").val(data.student_name);
         $("#exampleInputBranch").val(data.student_branch);
+        $("#exampleInputId").val(data.student_id);
         var fd = new FormData($("#student_form")[0]);
         console.log(fd)
+        // https://stackoverflow.com/questions/66863241/automatically-updates-the-table-without-refreshing-reloading-the-page
         // $.ajax({
         //     url: "{% url 'send_data' %}",
         //     type: "post",
