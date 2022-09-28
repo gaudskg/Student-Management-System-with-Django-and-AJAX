@@ -15,16 +15,18 @@ def home(request):
 
 @csrf_exempt
 def send_data(request):
-    # id = request.POST['id']
-    # print(id,"+****************************")
-    
-    
     if request.POST['stu_id'] != "":
-        b = Student.objects.get(id = request.POST['stu_id'])
-        b.name = request.POST['name']
-        b.email = request.POST['email']
-        b.branch = request.POST['branch']
+        stu_id = request.POST['stu_id']
+        b = Student.objects.get(id = stu_id)
+        name = request.POST['name']
+        branch = request.POST['name']
+        email = request.POST['name']
+        b.name = name
+        b.email = email
+        b.branch = branch
         b.save()
+        data = {'name':name, 'email':email, 'branch':branch, 'id':stu_id}
+        return JsonResponse(data)
     if request.POST['stu_id'] == "":
         email = request.POST['email']
         name = request.POST['name']
@@ -32,7 +34,10 @@ def send_data(request):
         values = Student.objects.create(name=name,email=email,branch=branch)
         values.save()
         print(f"{name}*******{email}************{branch}")
-    return JsonResponse({'status':200})
+        new_data = Student.objects.get(email=email)
+        stu_id = new_data.id
+        data = {'name':name, 'email':email, 'branch':branch, 'id':stu_id}
+        return JsonResponse(data)
 
 
 @csrf_exempt
