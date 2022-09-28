@@ -40,58 +40,61 @@
     <!-- Form -->
     <div class="container">
         <div class="div_form">
-        <form id="student_form">
-            <div class="form-group">
-                <label for="exampleInputEmail1">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                    placeholder="Enter email">
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
-                    else.</small>
-            </div>
-            <div class="form-group">
-                <label for="exampleInputName">Name</label>
-                <input type="text" class="form-control" id="exampleInputName" placeholder="Name">
-            </div>
-            <div class="form-group">
-                <label for="exampleInputBranch">Branch</label>
-                <input type="text" class="form-control" id="exampleInputBranch" placeholder="Branch">
-            </div>
-            <input type="hidden" class="form-control" id="exampleInputId" placeholder="Branch" >
+            <form id="student_form">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Email address</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                        placeholder="Enter email">
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                        else.</small>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputName">Name</label>
+                    <input type="text" class="form-control" id="exampleInputName" placeholder="Name">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputBranch">Branch</label>
+                    <input type="text" class="form-control" id="exampleInputBranch" placeholder="Branch">
+                </div>
+                <input type="hidden" class="form-control" id="exampleInputId" placeholder="Branch">
 
-            <button type="submit" class="btn btn-primary" id="subm">Submit</button>
-        </form>
-    </div>
+                <button type="submit" class="btn btn-primary" id="subm">Submit</button>
+            </form>
+        </div>
         <!-- FOrm End -->
         <br><br>
         <!-- table Start -->
         <div class="stude_table">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">EMAIL</th>
-                    <th scope="col">BRANCH</th>
-                    <th scope="col">ACTION</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for val in data %}
-                <tr>
-                    <th scope="row">{{val.id}}</th>
-                    <td>{{val.name}}</td>
-                    <td>{{val.email}}</td>
-                    <td>{{val.branch}}</td>
-                    <td>
-                        <a data-target="#student_form" data-button='{"student_id":"{{val.id}}","student_name":"{{val.name}}","student_email":"{{val.email}}","student_branch":"{{val.branch}}"}' href="#" class="btn btn-info btn-xs edit_student">EDIT</a>
-                        <a data-button='{"student_id":"{{val.id}}"}' href="#" class="btn btn-danger btn-xs delet_student">Delete</a>
-                    </td>
-                    <!-- <td><a data-toggle="modal" data-target="#delete_tutorial"  data-button='{"tutorial_id":"{{row.tutorial_id}}"}' href="#" class="btn btn-info btn-xs delete_tutorial">Delete</a></td> -->
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">EMAIL</th>
+                        <th scope="col">BRANCH</th>
+                        <th scope="col">ACTION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for val in data %}
+                    <tr id="table_row_{{val.id}}">
+                        <th scope="row">{{val.id}}</th>
+                        <td id="name_{{val.id}}">{{val.name}}</td>
+                        <td id="email_{{val.id}}">{{val.email}}</td>
+                        <td id="branch_{{val.id}}">{{val.branch}}</td>
+                        <td>
+                            <a data-target="#student_form"
+                                data-button='{"student_id":"{{val.id}}","student_name":"{{val.name}}","student_email":"{{val.email}}","student_branch":"{{val.branch}}"}'
+                                href="#" class="btn btn-info btn-xs edit_student">EDIT</a>
+                            <a data-button='{"student_id":"{{val.id}}"}' href="#"
+                                class="btn btn-danger btn-xs delet_student">Delete</a>
+                        </td>
+                        <!-- <td><a data-toggle="modal" data-target="#delete_tutorial"  data-button='{"tutorial_id":"{{row.tutorial_id}}"}' href="#" class="btn btn-info btn-xs delete_tutorial">Delete</a></td> -->
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         <!-- Table end -->
     </div>
 
@@ -118,86 +121,79 @@
             var email = $("#exampleInputEmail1").val();
             var branch = $("#exampleInputBranch").val();
             var stu_id = $("#exampleInputId").val();
-            
+
             data = {
                 'name': name,
                 'email': email,
                 'branch': branch,
                 'stu_id': stu_id
             }
-            // console.log(name, email, branch);
+
+            // AJAX CALL FOR UPDATIN THE TABLE
             $.ajax({
                 type: "POST",
                 url: "{% url 'send_data'%}",
                 data: data,
                 dataType: 'json',
                 success: function (data) {
-                    // var json_data = $.parseJSON(data)
-                    console.log(data)
                     var json_data = JSON.parse(JSON.stringify(data));
-                    console.log(json_data.name)
-
-                    // console.log('DATA SENT')
-                    // location.reload();
-                    $('.table').append(`
-                    <tr>
+                    if (json_data.hasOwnProperty("new")) {
+                        console.log("NEW DATA")
+                        $('.table').append(`
+                    <tr id="table_row_${json_data.id}">
                         <th scope="row">${json_data.id}</th>
-                        <td>${json_data.name}</td>
-                        <td>${json_data.email}</td>
-                        <td>${json_data.branch}</td>
+                        <td id="name_${json_data.id}">${json_data.name}</td>
+                        <td id="email_${json_data.id}">${json_data.email}</td>
+                        <td id="branch_${json_data.id}">${json_data.branch}</td>
                         <td>
                             <a data-target="#student_form" data-button='{"student_id":"${json_data.id}","student_name":"${json_data.name}","student_email":"${json_data.email}","student_branch":"${json_data.branch}"}' href="#" class="btn btn-info btn-xs edit_student">EDIT</a>
                             <a data-button='{"student_id":"${json_data.id}"}' href="#" class="btn btn-danger btn-xs delet_student">Delete</a>
                         </td>
                     </tr>
                 `);
+                    } else {
+                        console.log(json_data.name, json_data.email, json_data.branch, "************************")
+                        location.reload();
+                    }
+                    const form = document.getElementById('student_form');
+                    form.reset();
                 }
             });
         });
 
+
         // DELETE ACTION
         $('body').on("click", ".delet_student", function () {
-                var data = $.parseJSON($(this).attr('data-button'));
-                var student_id = data.student_id;
-                console.log(student_id)
-                $.ajax({
-                    url: "{% url 'delete_data' %}",
-                    type: "post",
-                    data: {
-                        student_id: student_id,
-                    },
-                    success: function (data) {
-                        alert('DATA DELETED')
-                        location.reload();
-                    }
-                });
+            var data = $.parseJSON($(this).attr('data-button'));
+            var student_id = data.student_id;
+            console.log(student_id)
+            $.ajax({
+                url: "{% url 'delete_data' %}",
+                type: "post",
+                data: {
+                    student_id: student_id,
+                },
+                success: function (data) {
+                    console.log("DATA DELETED")
+                    var json_data = JSON.parse(JSON.stringify(data));
+                    $("#table_row_" + json_data.id).fadeOut('slow');
+
+                    // location.reload();
+                }
+            });
         });
 
         // EDIT ACTION
         $('body').on("click", ".edit_student", function () {
-
-        var data = $.parseJSON($(this).attr('data-button'));
-        var student_id = data.student_id;
-        // console.log(student_id)
-        $("#exampleInputEmail1").val(data.student_email);
-        $("#exampleInputName").val(data.student_name);
-        $("#exampleInputBranch").val(data.student_branch);
-        $("#exampleInputId").val(data.student_id);
-        var fd = new FormData($("#student_form")[0]);
-        console.log(fd)
-        // https://stackoverflow.com/questions/66863241/automatically-updates-the-table-without-refreshing-reloading-the-page
-        // $.ajax({
-        //     url: "{% url 'send_data' %}",
-        //     type: "post",
-        //     dataType: 'json',
-        //     data: fd,
-        //     cache : false,
-        //     processData: false,
-        //     success: function (data) {
-        //         var data = JSON.parse(data);
-        //         // location.reload();
-        //     }
-        // });
+            var data = $.parseJSON($(this).attr('data-button'));
+            var student_id = data.student_id;
+            // console.log(student_id)
+            $("#exampleInputEmail1").val(data.student_email);
+            $("#exampleInputName").val(data.student_name);
+            $("#exampleInputBranch").val(data.student_branch);
+            $("#exampleInputId").val(data.student_id);
+            var fd = new FormData($("#student_form")[0]);
+            console.log(fd)
         });
 
     });

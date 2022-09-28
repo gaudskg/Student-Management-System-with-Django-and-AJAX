@@ -19,13 +19,14 @@ def send_data(request):
         stu_id = request.POST['stu_id']
         b = Student.objects.get(id = stu_id)
         name = request.POST['name']
-        branch = request.POST['name']
-        email = request.POST['name']
+        branch = request.POST['branch']
+        email = request.POST['email']
         b.name = name
         b.email = email
         b.branch = branch
         b.save()
         data = {'name':name, 'email':email, 'branch':branch, 'id':stu_id}
+        print(data,"UPDATED DATA")
         return JsonResponse(data)
     if request.POST['stu_id'] == "":
         email = request.POST['email']
@@ -33,10 +34,11 @@ def send_data(request):
         branch = request.POST['branch']
         values = Student.objects.create(name=name,email=email,branch=branch)
         values.save()
-        print(f"{name}*******{email}************{branch}")
+        # print(f"{name}*******{email}************{branch}")
         new_data = Student.objects.get(email=email)
         stu_id = new_data.id
-        data = {'name':name, 'email':email, 'branch':branch, 'id':stu_id}
+        data = {'name':name, 'email':email, 'branch':branch, 'id':stu_id, 'new':'new'}
+        print(data,"NEW DATA")
         return JsonResponse(data)
 
 
@@ -45,4 +47,5 @@ def delete_data(request):
     student_id = request.POST['student_id']
     b = Student.objects.get(id = student_id)
     b.delete()
-    return JsonResponse({'status':200})
+    print(b,"***********************************")
+    return JsonResponse({'id':student_id})
